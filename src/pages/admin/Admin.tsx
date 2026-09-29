@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { api } from '../../services/api'
 import { useAsync } from '../../hooks/useAsync'
 import { Async, Empty } from '../../components/ui'
-import type { Item, Partner, Resource } from '../../types'
+import type { Item, Partner, Project, Resource } from '../../types'
 
 export function AdminDashboard(){const rs:Resource[]=['projects','services','skills','requests','messages','users']
  const d=useAsync(()=>Promise.all(rs.map(r=>api.list(r))),[])
@@ -22,6 +22,70 @@ export function Crud({resource,title}:{resource:Resource;title:string}){
    <button className="btn-o" disabled={i===0} onClick={()=>set(a=>{const b=[...a];[b[i-1],b[i]]=[b[i],b[i-1]];return b})}>↑</button>
    <button className="btn-o" onClick={()=>{const n=prompt('Nouveau nom',x.name);if(n)set(a=>a.map(y=>y.id===x.id?{...y,name:n}:y))}}>Modifier</button>
    <button className="btn-o text-red-600" onClick={()=>confirm('Supprimer ?')&&set(a=>a.filter(y=>y.id!==x.id))}>Supprimer</button></span></li>)}</ul>:<Empty>Aucun élément.</Empty>}</Async></div>}
+
+export function ProjectsManager(){
+ const d=useAsync(()=>api.list<Project>('projects'),[])
+ const [name,setName]=useState('')
+ const [description,setDescription]=useState('')
+ const [image,setImage]=useState('')
+ const [error,setError]=useState('')
+ const [notice,setNotice]=useState('')
+ const [saving,setSaving]=useState(false)
+
+ function selectImage(event:React.ChangeEvent<HTMLInputElement>){
+  const file=event.target.files?.[0]
+  setError('')
+  setImage('')
+  if(!file)return
+  if(!file.type.startsWith('image/')){setError('Veuillez sélectionner un fichier image.');return}
+  if(file.size>5*1024*1024){setError('L’image ne doit pas dépasser 5 Mo.');return}
+  const reader=new FileReader()
+  reader.onload=()=>{if(typeof reader.result==='string')setImage(reader.result)}
+  reader.onerror=()=>setError('Impossible de lire cette image. Sélectionnez un autre fichier.')
+  reader.readAsDataURL(file)
+ }
+
+ async function add(event:React.FormEvent<HTMLFormElement>){
+  event.preventDefault()
+  const form=event.currentTarget
+  setError('')
+  setNotice('')
+  setSaving(true)
+  try{
+   const project=await api.addProject({name:name.trim(),description:description.trim(),image})
+   d.setData([...(d.data??[]),project])
+   setName('')
+   setDescription('')
+   setImage('')
+   form.reset()
+   setNotice(import.meta.env.VITE_USE_MOCK==='false'
+    ?'Réalisation enregistrée. Elle sera publiée dès la mise à jour du site.'
+    :'Réalisation enregistrée sur cet appareil. Elle sera publiée sur le site en ligne après configuration de l’API ou intégration avant le prochain déploiement.')
+  }catch(exception){
+   setError(exception instanceof Error?exception.message:'Impossible d’enregistrer cette réalisation.')
+  }finally{
+   setSaving(false)
+  }
+ }
+
+ return <div className="project-admin">
+  <h1 className="admin-page-title">Réalisations</h1>
+  <p className="admin-page-lead">Ajoutez une image et une courte description pour chaque projet.</p>
+  <form className="project-admin-form" onSubmit={add}>
+   <label className="partner-admin-label">Nom du projet<input className="input mt-2" required maxLength={120} value={name} onChange={event=>setName(event.target.value)} placeholder="Ex. Site vitrine"/></label>
+   <label className="partner-admin-label">Image du projet<input className="input mt-2" type="file" accept="image/*" required onChange={selectImage}/></label>
+   {image&&<img className="project-admin-preview" src={image} alt="Aperçu de la réalisation"/>}
+   <label className="partner-admin-label sm:col-span-2">Brève description<textarea className="input mt-2" rows={3} required maxLength={500} value={description} onChange={event=>setDescription(event.target.value)} placeholder="Présentez brièvement le projet."/></label>
+   <p className="project-admin-note sm:col-span-2">Les ajouts en mode local sont enregistrés dans ce navigateur uniquement. Pour les partager sur le site en ligne, l’API de gestion des réalisations doit être configurée.</p>
+   {error&&<p role="alert" className="auth-error sm:col-span-2">{error}</p>}
+   {notice&&<p role="status" className="project-admin-success sm:col-span-2">{notice}</p>}
+   <button className="btn sm:col-span-2 sm:justify-self-start" disabled={saving||!image}>{saving?'Enregistrement…':'Ajouter la réalisation'}</button>
+  </form>
+  <Async loading={d.loading} error={d.error}>{d.data?.length
+   ?<div className="project-admin-list">{d.data.map(project=><article className="project-admin-row" key={project.id}><img src={project.image} alt=""/><div><h2>{project.name}</h2><p>{project.description}</p></div></article>)}</div>
+   :<Empty>Aucune réalisation enregistrée.</Empty>}</Async>
+ </div>
+}
 
    export function PartnerManager(){
     const d=useAsync(()=>api.list<Partner>('partners'),[])

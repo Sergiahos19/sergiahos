@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 import { useAsync } from '../hooks/useAsync'
 import { Async, Empty, Page } from '../components/ui'
@@ -7,7 +7,7 @@ import { Icon, type IconName } from '../components/Icon'
 import { profile } from '../data/profile'
 import { Brand } from '../components/Brand'
 import SimpleForm from '../components/SimpleForm'
-import type { Item, Partner, SeoResult } from '../types'
+import type { Item, Partner, Project, SeoResult } from '../types'
 
 const serviceIcons: IconName[] = ['code', 'smartphone', 'plug', 'search', 'workflow', 'sparkles']
 
@@ -35,7 +35,7 @@ export function Home(){const s=useAsync(()=>api.list<Item>('services'),[])
     </div>
    </div>
   </section>
-  <section id="services-list" className="section-wrap">
+  <section id="services-list" className="section-wrap" tabIndex={-1}>
    <div className="section-heading"><div><p className="eyebrow">Ce que je peux faire pour vous</p><h2>Des services adaptés à vos ambitions.</h2></div><Link className="text-link" to="/services">Tous les services <Icon name="arrow-right" size={17}/></Link></div>
    <Async loading={s.loading} error={s.error}><div className="service-grid">{s.data?.filter(x=>x.active).map((x,i)=><article key={x.id} className="service-card"><div className="service-icon"><Icon name={serviceIcons[i%serviceIcons.length]} size={23}/></div><h3>{x.name}</h3><p>{x.description}</p><Link className="text-link mt-5" to={`/request?service=${encodeURIComponent(x.name)}`}>Découvrir <Icon name="arrow-right" size={16}/></Link></article>)}</div></Async>
   </section>
@@ -69,39 +69,39 @@ export function About(){return <section className="section-wrap about-wrap">
   </div>
  </section>}
 
-export function Projects(){const [q,setQ]=useState('');const [cat,setCat]=useState('Tous');const p=useAsync(()=>api.list<Item>('projects'),[])
- const cats=['Tous',...new Set(p.data?.map(x=>x.category))];const l=p.data?.filter(x=>x.published!==false&&(cat==='Tous'||x.category===cat)&&x.name.toLowerCase().includes(q.toLowerCase()))
- return<Page title="Mes réalisations"><div className="mb-6 flex flex-wrap gap-2"><input className="input max-w-xs" placeholder="Rechercher…" aria-label="Rechercher" value={q} onChange={e=>setQ(e.target.value)}/>{cats.map(c=><button key={c} aria-pressed={c===cat} onClick={()=>setCat(c)} className={`rounded-full border px-4 py-1.5 text-sm ${c===cat?'bg-sky text-white':''}`}>{c}</button>)}</div>
-  <Async loading={p.loading} error={p.error}>{l?.length?<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{l.map(x=><Link key={x.id} to={`/projects/${x.id}`} className="card"><div className="mb-3 grid h-28 place-items-center rounded-lg bg-sky-light text-3xl">🖼️</div><span className="text-xs font-bold uppercase text-sky">{x.category}</span><h2 className="font-bold">{x.name}</h2><p className="text-sm text-slate-600">{x.description}</p></Link>)}</div>:<Empty>Aucun projet trouvé.</Empty>}</Async></Page>}
-
-export function ProjectDetail(){const {id}=useParams();const p=useAsync(()=>api.get<Item>('projects',Number(id)),[id])
- return<Page title={p.data?.name??'Réalisation'}><Async loading={p.loading} error={p.error}>{p.data?<article className="project-detail-card"><p className="project-description">{p.data.description}</p><div className="project-detail-grid"><section><h2>Problématique</h2><p>{p.data.problem}</p></section><section><h2>Solution</h2><p>{p.data.solution}</p></section></div>{p.data.techs?.length>0&&<p className="project-techs">{p.data.techs.join(' · ')}</p>}{p.data.url&&p.data.url!=='#'&&<a className="btn project-visit" href={p.data.url} target="_blank" rel="noreferrer">Visiter le projet <Icon name="arrow-up-right" size={17}/></a>}</article>:<Empty>Projet introuvable.</Empty>}</Async></Page>}
+export function Projects(){const p=useAsync(()=>api.list<Project>('projects'),[])
+ const published=p.data?.filter(x=>x.published!==false)??[]
+ return<Page title="Mes réalisations">
+  <Async loading={p.loading} error={p.error}>{published.length?<div className="project-gallery">{published.map(project=><article key={project.id} className="project-card"><img className="project-image" src={project.image} alt={`Image du projet ${project.name}`} loading="lazy"/><div className="project-card-copy"><h2>{project.name}</h2><p>{project.description}</p></div></article>)}</div>:<Empty>Les réalisations seront publiées bientôt. Revenez prochainement.</Empty>}</Async></Page>}
 
 export function Request(){const [sp]=useSearchParams();const s=useAsync(()=>api.list<Item>('services'),[])
  return<Page title="Demander un projet"><div className="request-form-card"><p>Décrivez votre besoin pour que nous puissions étudier la meilleure approche.</p><SimpleForm cta="Envoyer ma demande" initial={{service:sp.get('service')??''}} onSubmit={d=>api.submit('requests',d)} fields={[{name:'nom',label:'Nom',required:true},{name:'email',label:'E-mail',type:'email',required:true},{name:'service',label:'Service demandé',type:'select',options:s.data?.map(x=>x.name),otherOption:true,required:true},{name:'budget',label:'Budget estimé (FCFA)',type:'select',options:['À discuter','Moins de 100 000 FCFA','100 000 à 300 000 FCFA','300 000 à 750 000 FCFA','750 000 à 1 500 000 FCFA','Plus de 1 500 000 FCFA']},{name:'desc',label:'Description',type:'textarea',required:true}]}/></div></Page>}
 
 export function Contact(){return <section className="section-wrap contact-wrap">
- <div className="section-heading"><div><p className="eyebrow">Contact</p><h1>Parlons de votre prochain projet.</h1><p className="section-lead">Une question, une idée ou un besoin précis ? Décrivez-moi ce que vous avez en tête, je vous répondrai avec plaisir.</p></div></div>
+ <div className="contact-heading"><p className="eyebrow">Contact</p><h1>Parlons de votre prochain projet.</h1><p className="section-lead">Une question, une idée ou un besoin précis ? Décrivez-moi ce que vous avez en tête, je vous répondrai avec plaisir.</p></div>
  <div className="contact-grid">
-  <div className="contact-aside">
+  <div className="contact-methods">
    <article className="contact-method"><span className="contact-icon"><Icon name="mail" size={20}/></span><div><small>E-mail</small><a href={`mailto:${profile.email}`}>{profile.email}</a></div></article>
    {profile.phone && <article className="contact-method"><span className="contact-icon"><Icon name="phone" size={20}/></span><div><small>Téléphone</small><a href={`tel:${profile.phone.replace(/[^\d+]/g, '')}`}>{profile.phone}</a></div></article>}
-   <div className="contact-note"><p className="eyebrow">Une collaboration simple</p><p>Parlez-moi de votre contexte et de vos objectifs. Nous pourrons ensuite voir ensemble la meilleure façon d’avancer.</p></div>
-   {profile.socials.length > 0 && <div className="contact-socials"><h2>Retrouvez-moi aussi ici</h2><div className="flex flex-wrap gap-3">{profile.socials.map(social=><a className={`social-pill${social.url ? '' : ' social-pill-disabled'}`} key={social.label} href={social.url || undefined} title={social.url ? social.label : 'Lien à ajouter'} target={social.url ? '_blank' : undefined} rel={social.url ? 'noreferrer' : undefined}><Icon name={social.icon} size={17}/>{social.label}</a>)}</div></div>}
   </div>
-  <div className="contact-form-card"><h2>Envoyez-moi un message</h2><p>Les champs marqués d’un astérisque sont obligatoires.</p><SimpleForm cta="Envoyer le message" onSubmit={d=>api.submit('messages',d)} fields={[{name:'nom',label:'Votre nom *',required:true},{name:'email',label:'Votre e-mail *',type:'email',required:true},{name:'sujet',label:'Sujet *',required:true},{name:'msg',label:'Votre message *',type:'textarea',required:true}]}/></div>
+  <div className="contact-extras">
+   <div className="contact-note"><p className="eyebrow">Une collaboration simple</p><p>Parlez-moi de votre contexte et de vos objectifs. Nous pourrons ensuite voir ensemble la meilleure façon d’avancer.</p></div>
+  </div>
+  <div className="contact-form-card"><h2>Envoyez-moi un message</h2><SimpleForm cta="Envoyer le message" onSubmit={d=>api.submit('messages',d)} fields={[{name:'nom',label:'Votre nom *',required:true},{name:'email',label:'Votre e-mail *',type:'email',required:true},{name:'sujet',label:'Sujet *',required:true},{name:'msg',label:'Votre message *',type:'textarea',required:true}]}/></div>
+  {profile.socials.length > 0 && <div className="contact-socials"><h2>Retrouvez-moi aussi ici</h2><div className="contact-social-links">{profile.socials.map(social=><a className={`social-pill${social.url ? '' : ' social-pill-disabled'}`} key={social.label} href={social.url || undefined} aria-label={social.url ? social.label : `${social.label}, lien à ajouter`} title={social.url ? social.label : 'Lien à ajouter'} target={social.url ? '_blank' : undefined} rel={social.url ? 'noreferrer' : undefined}><Icon name={social.icon} size={17}/>{social.label}</a>)}</div></div>}
  </div>
  </section>}
 
 export function Faq(){const f=useAsync(()=>api.list<Item>('faqs'),[]);const [o,setO]=useState<number>()
  return<Page title="FAQ"><Async loading={f.loading} error={f.error}><div className="faq-list">{f.data?.filter(x=>x.active).map(x=><div key={x.id} className="faq-card"><button className="faq-question" aria-expanded={o===x.id} onClick={()=>setO(o===x.id?undefined:x.id)}><span>{x.name}</span><span className="faq-indicator">{o===x.id?'−':'+'}</span></button>{o===x.id&&<p className="faq-answer">{x.description}</p>}</div>)}</div></Async></Page>}
 
-export function SeoAudit(){const [url,setUrl]=useState('');const [pct,setPct]=useState(0);const [r,setR]=useState<SeoResult>();const nav=useNavigate()
- async function go(e:React.FormEvent){e.preventDefault();if(!url.trim())return;setR(undefined);setPct(1);for(let i=1;i<=10;i++){await new Promise(x=>setTimeout(x,250));setPct(i*10)};setR(await api.analyze(url));setPct(0)}
+export function SeoAudit(){const [url,setUrl]=useState('');const [loading,setLoading]=useState(false);const [error,setError]=useState('');const [r,setR]=useState<SeoResult>();const nav=useNavigate()
+ async function go(e:React.FormEvent){e.preventDefault();if(!url.trim())return;setR(undefined);setError('');setLoading(true);try{const result=await api.analyze(url);setR(result)}catch(x){setError(x instanceof Error?x.message:'Le diagnostic a échoué. Réessayez.')}finally{setLoading(false)}}
  const L=(t:string,a:string[],c:string)=><div className="card"><h3 className={`font-bold ${c}`}>{t}</h3><ul className="list-disc pl-5 text-sm">{a.map(x=><li key={x}>{x}</li>)}</ul></div>
- return<Page title="Diagnostic SEO"><div className="seo-content"><p className="seo-intro">Analysez les principaux points de visibilité de votre site et identifiez les pistes d’amélioration.</p><form onSubmit={go} className="seo-form"><input className="input" type="url" required placeholder="https://monsite.com" aria-label="URL du site à analyser" value={url} onChange={e=>setUrl(e.target.value)}/><button className="btn" disabled={pct>0}>{pct>0?'Analyse…':'Analyser mon site'}</button></form>
-  {pct>0&&<div role="progressbar" aria-label="Progression de l’analyse" aria-valuenow={pct} className="seo-progress"><div className="h-full rounded-full bg-sky transition-all" style={{width:`${pct}%`}}/></div>}
-  {r&&<div className="seo-results"><p className="seo-score">{r.score}<span>/100</span></p><div className="seo-result-grid">{L('Critiques',r.critical,'text-red-600')}{L('À améliorer',r.warnings,'text-amber-600')}{L('Points positifs',r.good,'text-green-600')}</div><button className="btn" onClick={()=>nav('/request?service=SEO')}>Améliorer mon référencement <Icon name="arrow-up-right" size={17}/></button></div>}</div></Page>}
+ return<Page title="Diagnostic SEO"><div className="seo-content"><p className="seo-intro">Analysez les principaux points de visibilité de votre site et identifiez les pistes d’amélioration.</p><form onSubmit={go} className="seo-form"><input className="input" type="url" required placeholder="https://monsite.com" aria-label="URL du site à analyser" value={url} onChange={e=>setUrl(e.target.value)}/><button className="btn" disabled={loading}>{loading?'Vérification…':'Analyser mon site'}</button></form>
+  {loading&&<div role="status" className="seo-checking">Vérification de l’existence du site avant l’analyse…</div>}
+  {error&&<p role="alert" className="auth-error">{error}</p>}
+  {r&&<div className="seo-results"><p className="seo-score">{r.score}<span>/100</span></p><div className="seo-result-grid">{L('Critiques',r.critical??[],'text-red-600')}{L('À améliorer',r.warnings??[],'text-amber-600')}{L('Points positifs',r.good??[],'text-green-600')}</div><button className="btn" onClick={()=>nav('/request?service=SEO')}>Améliorer mon référencement <Icon name="arrow-up-right" size={17}/></button></div>}</div></Page>}
 
 export function Partners(){const p=useAsync(()=>api.list<Partner>('partners'),[])
  return<Page title="Partenaires"><div className="partners-content"><p className="partners-intro">Je suis heureux de collaborer avec des entreprises qui partagent le goût du travail bien fait et des solutions utiles.</p><Async loading={p.loading} error={p.error}>{p.data?.filter(x=>x.active).length?<div className="partner-grid">{p.data.filter(x=>x.active).map(partner=><article className="partner-card" key={partner.id}><img src={partner.logoUrl} alt={`Logo ${partner.name}`} loading="lazy"/><h2>{partner.name}</h2></article>)}</div>:<Empty>Les partenaires seront bientôt présentés ici.</Empty>}</Async></div></Page>}

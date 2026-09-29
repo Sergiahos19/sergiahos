@@ -16,10 +16,10 @@ export const profile: {
   phone: '+229 01 56 03 68 00',
   portrait,
   socials: [
+    { label: 'GitHub', url: 'https://github.com/Sergiahos19', icon: 'github' },
+    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/sergi-serla', icon: 'linkedin' },
     { label: 'Facebook', url: '', icon: 'facebook' },
     { label: 'Instagram', url: '', icon: 'instagram' },
     { label: 'TikTok', url: '', icon: 'tiktok' },
-    { label: 'LinkedIn', url: '', icon: 'linkedin' },
-    { label: 'GitHub', url: '', icon: 'github' },
   ],
 }

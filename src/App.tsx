@@ -1,15 +1,34 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { useLayoutEffect } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import PublicLayout from './layouts/PublicLayout'
 import AdminLayout from './layouts/AdminLayout'
-import { Home, About, Projects, ProjectDetail, Request, Contact, Faq, SeoAudit, Login, Partners } from './pages/Public'
+import { Home, About, Projects, Request, Contact, Faq, SeoAudit, Login, Partners } from './pages/Public'
 import { UserHome, Notifications } from './pages/Space'
-import { AdminDashboard, Crud, PartnerManager, Settings } from './pages/admin/Admin'
+import { AdminDashboard, Crud, PartnerManager, ProjectsManager, Settings } from './pages/admin/Admin'
 import type { Resource } from './types'
 const crud:[string,Resource,string][]=[['skills','skills','Compétences'],['services','services','Services'],['projects','projects','Réalisations'],['partners','partners','Partenaires'],['requests','requests','Demandes'],['seo-audits','requests','Diagnostics SEO'],['messages','messages','Messages'],['faqs','faqs','FAQ'],['users','users','Utilisateurs']]
-export default function App(){return<Routes>
- <Route element={<PublicLayout/>}><Route path="/" element={<Home/>}/><Route path="/about" element={<About/>}/><Route path="/services" element={<Home/>}/><Route path="/projects" element={<Projects/>}/><Route path="/projects/:id" element={<ProjectDetail/>}/>
+function ScrollToRoute(){const {pathname,hash}=useLocation()
+ useLayoutEffect(()=>{
+  if(hash){
+   const target=document.getElementById(decodeURIComponent(hash.slice(1)))
+   if(target){
+    target.focus({preventScroll:true})
+    target.scrollIntoView({behavior:'smooth',block:'start'})
+   }else window.scrollTo({top:0,left:0,behavior:'instant'})
+   return
+  }
+  document.getElementById('main-content')?.focus({preventScroll:true})
+  window.scrollTo({top:0,left:0,behavior:'instant'})
+ },[pathname,hash])
+ return null
+}
+export default function App(){return<>
+ <ScrollToRoute/>
+ <Routes>
+ <Route element={<PublicLayout/>}><Route path="/" element={<Home/>}/><Route path="/about" element={<About/>}/><Route path="/services" element={<Home/>}/><Route path="/projects" element={<Projects/>}/><Route path="/projects/:id" element={<Navigate to="/projects" replace/>}/>
   <Route path="/request" element={<Request/>}/><Route path="/seo-audit" element={<SeoAudit/>}/><Route path="/faq" element={<Faq/>}/><Route path="/partners" element={<Partners/>}/><Route path="/contact" element={<Contact/>}/><Route path="/login" element={<Login/>}/><Route path="/admin/login" element={<Login admin/>}/></Route>
  <Route path="/dashboard" element={<AdminLayout scope="dashboard"/>}><Route index element={<UserHome/>}/><Route path="requests" element={<UserHome/>}/><Route path="notifications" element={<Notifications/>}/></Route>
  <Route path="/admin" element={<AdminLayout scope="admin"/>}><Route index element={<Navigate to="dashboard"/>}/><Route path="dashboard" element={<AdminDashboard/>}/>
-  {crud.map(([p,r,t])=><Route key={p} path={p} element={r==='partners'?<PartnerManager/>:<Crud resource={r} title={t}/>}/>)}<Route path="settings" element={<Settings/>}/></Route>
- <Route path="*" element={<Navigate to="/"/>}/></Routes>}
+  {crud.map(([p,r,t])=><Route key={p} path={p} element={r==='partners'?<PartnerManager/>:r==='projects'?<ProjectsManager/>:<Crud resource={r} title={t}/>}/>)}<Route path="settings" element={<Settings/>}/></Route>
+ <Route path="*" element={<Navigate to="/" replace/>}/></Routes>
+ </>}

@@ -60,7 +60,7 @@ export default function PublicLayout() {
         </div>
       </header>
 
-      <main id="main-content"><Outlet /></main>
+      <main id="main-content" tabIndex={-1}><Outlet /></main>
 
       <footer className="site-footer">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
@@ -87,7 +87,7 @@ export default function PublicLayout() {
               </a>
             )}
             {profile.socials.length > 0 && (
-              <div className="mt-5 flex gap-3">
+              <div className="footer-socials mt-5 flex gap-3">
                 {profile.socials.map(social => (
                   <a key={social.label} className={`social-link${social.url ? '' : ' social-link-disabled'}`} href={social.url || undefined} aria-label={social.url ? social.label : `${social.label}, lien à ajouter`} title={social.url ? social.label : 'Lien à ajouter'} target={social.url ? '_blank' : undefined} rel={social.url ? 'noreferrer' : undefined}>
                     <Icon name={social.icon} size={18} />
