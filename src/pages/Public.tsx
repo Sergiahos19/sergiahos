@@ -64,7 +64,7 @@ export function About(){return <section className="section-wrap about-wrap">
   </div>
   <div className="journey-heading approach-heading"><p className="eyebrow">Ma façon de travailler</p><h2>Du besoin à une solution qui évolue.</h2></div>
   <div className="approach-grid">
-   {[['01','Écouter','Comprendre votre contexte et les personnes à qui vous vous adressez.'],['02','Concevoir','Définir une expérience et une solution cohérentes avec vos objectifs.'],['03','Construire','Livrer un produit soigné, responsive et prêt à évoluer.']].map(([n,t,d])=><article className="approach-card" key={n}><span>{n}</span><h3>{t}</h3><p>{d}</p></article>)}
+   {[['01','Écouter','Comprendre votre contexte et les personnes à qui vous vous adressez.'],['02','Concevoir','Définir une expérience et une solution cohérente avec vos objectifs.'],['03','Construire','Livrer un produit soigné, responsive et prêt à évoluer.']].map(([n,t,d])=><article className="approach-card" key={n}><span>{n}</span><h3>{t}</h3><p>{d}</p></article>)}
   </div>
  </section>}
 
