@@ -22,7 +22,7 @@ export function Home(){const s=useAsync(()=>api.list<Item>('services'),[])
       <Link className="btn" to="/request">Parlons de votre projet <Icon name="arrow-up-right" size={17}/></Link>
       <Link className="btn-o" to="/projects">Découvrir mes réalisations</Link>
      </div>
-     <div className="hero-proof"><span className=""/><span>Né à Cotonou, au Bénin, pour l'Afrique et le monde.</span></div>
+     <div className="hero-proof"><span className=""/><span>Un jour à Cotonou, au Bénin, pour l’Afrique et le monde.</span></div>
     </div>
     <div className="hero-visual" role="img" aria-label={`Portrait de ${profile.name}`}>
      <div className="hero-orbit orbit-one"/><div className="hero-orbit orbit-two"/>
