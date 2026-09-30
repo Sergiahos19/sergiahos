@@ -5,7 +5,6 @@ import { useAsync } from '../hooks/useAsync'
 import { Async, Empty, Page } from '../components/ui'
 import { Icon, type IconName } from '../components/Icon'
 import { profile } from '../data/profile'
-import { Brand } from '../components/Brand'
 import SimpleForm from '../components/SimpleForm'
 import type { Item, Partner, Project, SeoResult } from '../types'
 
@@ -70,7 +69,7 @@ export function About(){return <section className="section-wrap about-wrap">
  </section>}
 
 export function Projects(){const p=useAsync(()=>api.list<Project>('projects'),[])
- const published=p.data?.filter(x=>x.published!==false)??[]
+ const published=p.data?.filter(x=>x.active&&x.published!==false)??[]
  return<Page title="Mes réalisations">
   <Async loading={p.loading} error={p.error}>{published.length?<div className="project-gallery">{published.map(project=><article key={project.id} className="project-card"><img className="project-image" src={project.image} alt={`Image du projet ${project.name}`} loading="lazy"/><div className="project-card-copy"><h2>{project.name}</h2><p>{project.description}</p></div></article>)}</div>:<Empty>Les réalisations seront publiées bientôt. Revenez prochainement.</Empty>}</Async></Page>}
 
@@ -104,28 +103,5 @@ export function SeoAudit(){const [url,setUrl]=useState('');const [loading,setLoa
   {r&&<div className="seo-results"><p className="seo-score">{r.score}<span>/100</span></p><div className="seo-result-grid">{L('Critiques',r.critical??[],'text-red-600')}{L('À améliorer',r.warnings??[],'text-amber-600')}{L('Points positifs',r.good??[],'text-green-600')}</div><button className="btn" onClick={()=>nav('/request?service=SEO')}>Améliorer mon référencement <Icon name="arrow-up-right" size={17}/></button></div>}</div></Page>}
 
 export function Partners(){const p=useAsync(()=>api.list<Partner>('partners'),[])
- return<Page title="Partenaires"><div className="partners-content"><p className="partners-intro">Je suis heureux de collaborer avec des entreprises qui partagent le goût du travail bien fait et des solutions utiles.</p><Async loading={p.loading} error={p.error}>{p.data?.filter(x=>x.active).length?<div className="partner-grid">{p.data.filter(x=>x.active).map(partner=><article className="partner-card" key={partner.id}><img src={partner.logoUrl} alt={`Logo ${partner.name}`} loading="lazy"/><h2>{partner.name}</h2></article>)}</div>:<Empty>Les partenaires seront bientôt présentés ici.</Empty>}</Async></div></Page>}
-
-export function Login({admin=false}:{admin?:boolean}){const nav=useNavigate();const [e,setE]=useState('');const [p,setP]=useState('');const [err,setErr]=useState('');const [ld,setLd]=useState(false);const [showPassword,setShowPassword]=useState(false)
- async function go(ev:React.FormEvent){ev.preventDefault();setErr('');setLd(true)
-  try{const r=await api.login(e,p);if(admin&&r.role!=='admin')throw new Error('Ce compte ne dispose pas des droits administrateur.')
-   localStorage.setItem('token',r.token);localStorage.setItem('role',r.role);nav(r.role==='admin'?'/admin/dashboard':'/dashboard')
-  }catch(x){setErr(x instanceof Error?x.message:'La connexion a échoué. Veuillez réessayer.')}finally{setLd(false)}}
- return <section className="auth-page">
-  <div className="auth-card">
-   <Brand className="auth-brand" />
-   <p className="eyebrow mt-8">{admin?'Espace sécurisé':'Espace client'}</p>
-   <h1>{admin?'Connexion Admin':'Bon retour parmi nous'}</h1>
-   <form onSubmit={go} className="mt-7 space-y-5">
-    <label className="auth-label">Adresse e-mail
-     <input className="input mt-2" type="email" autoComplete="username" required placeholder="nom@exemple.com" value={e} onChange={x=>setE(x.target.value)}/>
-    </label>
-    <label className="auth-label">Mot de passe
-     <span className="password-field"><input className="input mt-2" type={showPassword?'text':'password'} autoComplete="current-password" required placeholder="Votre mot de passe" value={p} onChange={x=>setP(x.target.value)}/><button className="password-toggle" type="button" aria-label={showPassword?'Masquer le mot de passe':'Afficher le mot de passe'} aria-pressed={showPassword} onClick={()=>setShowPassword(!showPassword)}><Icon name={showPassword?'eye-off':'eye'} size={19}/></button></span>
-    </label>
-    {err&&<p role="alert" className="auth-error">{err}</p>}
-    <button className="btn w-full justify-center" disabled={ld}>{ld?'Connexion en cours…':'Se connecter'}</button>
-   </form>
-   <Link className="auth-back" to="/">← Retour au site</Link>
-  </div>
- </section>}
+ const partners=p.data?.filter(x=>x.active)??[]
+ return<Page title="Partenaires"><div className="partners-content"><p className="partners-intro">Je suis heureux de collaborer avec des entreprises qui partagent le goût du travail bien fait et des solutions utiles.</p><Async loading={p.loading} error={p.error}>{partners.length?<div className="partner-grid">{partners.map(partner=><article className="partner-card" key={partner.id}><img src={partner.logoUrl} alt={`Logo ${partner.name}`} loading="lazy"/></article>)}</div>:<Empty>Les partenaires seront bientôt présentés ici.</Empty>}</Async></div></Page>}

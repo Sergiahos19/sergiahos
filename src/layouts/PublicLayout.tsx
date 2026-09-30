@@ -100,7 +100,7 @@ export default function PublicLayout() {
         <div className="border-t border-white/10">
           <div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-5 text-xs text-white/50 sm:px-6 sm:flex-row sm:items-center sm:justify-between">
             <p>© {new Date().getFullYear()} Sergiahos - Tous droits réservés.</p>
-            <Link className="footer-link" to="/admin/login">Espace administrateur</Link>
+            <a className="footer-link" href={`https://wa.me/${profile.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer">Me contacter sur WhatsApp</a>
           </div>
         </div>
       </footer>
