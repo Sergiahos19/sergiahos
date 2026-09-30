@@ -70,7 +70,7 @@ export function About(){return <section className="section-wrap about-wrap">
 
 export function Projects(){const p=useAsync(()=>api.list<Project>('projects'),[])
  const published=p.data?.filter(x=>x.active&&x.published!==false)??[]
- return<Page title="Mes réalisations">
+ return<Page title="Quelques réalisations">
   <Async loading={p.loading} error={p.error}>{published.length?<div className="project-gallery">{published.map(project=><article key={project.id} className="project-card"><img className="project-image" src={project.image} alt={`Image du projet ${project.name}`} loading="lazy"/><div className="project-card-copy"><h2>{project.name}</h2><p>{project.description}</p></div></article>)}</div>:<Empty>Les réalisations seront publiées bientôt. Revenez prochainement.</Empty>}</Async></Page>}
 
 export function Request(){const [sp]=useSearchParams();const s=useAsync(()=>api.list<Item>('services'),[])
