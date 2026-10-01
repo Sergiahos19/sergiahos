@@ -51,7 +51,7 @@ export function About(){return <section className="section-wrap about-wrap">
    <div className="about-copy">
     <p className="eyebrow">Mon histoire</p>
     <h2>De l’Informatique de Gestion aux solutions digitales.</h2>
-    <p>Mon parcours universitaire a commencé par une formation en Informatique de Gestion à l’Université Catholique de l'Afrique de l'Ouest - Unité Universitaire à Cotonou (UCAO-UUC), qui m’a apporté une compréhension à la fois technique et attentive aux besoins des organisations. Cette base m’a conduit vers le développement web et mobile, où chaque projet nourrit ma pratique et ma curiosité.</p>
+    <p>Mon parcours universitaire a commencé par une formation en Informatique de Gestion à l’Université Catholique de l'Afrique de l'Ouest Unité Universitaire à Cotonou (UCAO-UUC), qui m’a apporté une compréhension à la fois technique et attentive aux besoins des organisations. Cette base m’a conduit vers le développement web et mobile, où chaque projet nourrit ma pratique et ma curiosité.</p>
     <p>Un projet est pour moi plus qu’un défi technique : c’est l’occasion d’apprendre, d’innover et de transformer un besoin concret en une solution moderne et adaptée. Cette vision a donné naissance à Sergiahos : créer, développer et faire évoluer des idées qui ont du sens.</p>
     <p>Aujourd’hui, je conçois des sites web, des applications et des solutions sur mesure. J’interviens du frontend au backend, ainsi qu’en SEO, automatisation, intelligence artificielle, marketing digital et visibilité en ligne.</p>
     <div className="about-tags"><span>Full Stack</span><span>Web & mobile</span><span>SEO</span><span>Automatisation</span><span>Intelligence artificielle</span><span>Marketing digital</span></div>
