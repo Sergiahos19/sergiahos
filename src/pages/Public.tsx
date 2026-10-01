@@ -16,7 +16,7 @@ export function Home(){const s=useAsync(()=>api.list<Item>('services'),[])
     <div className="hero-copy">
      <p className="eyebrow"><span className="status-dot"/> Développeur Full Stack Web & Mobile</p>
      <h1>Transformation des idées en <span>expériences numériques</span> utiles.</h1>
-     <p className="hero-lead">Moi, c’est Sergiahos. Je transforme vos idées et vos besoins en solutions numériques claires, modernes, performantes et adaptées à votre activité.
+     <p className="hero-lead">Je transforme vos idées et vos besoins en solutions numériques claires, modernes, performantes et adaptées à votre activité.
 </p>
      <div className="mt-7 flex flex-col gap-3 min-[420px]:flex-row">
       <Link className="btn" to="/request">Parlons de votre projet <Icon name="arrow-up-right" size={17}/></Link>
@@ -46,12 +46,12 @@ export function About(){return <section className="section-wrap about-wrap">
   <div className="about-grid">
    <div className="about-portrait">
     {profile.portrait ? <img src={profile.portrait} alt={`Portrait de ${profile.name}`} className="portrait-image"/> : <div className="portrait-placeholder"><span>SH</span><small>Portrait de Sergiahos</small></div>}
-    <div className="about-photo-caption">Curiosité, rigueur et sens du détail.</div>
+    <div className="about-photo-caption">Un cerveau trop curieux pour rester tranquille.</div>
    </div>
    <div className="about-copy">
     <p className="eyebrow">Mon histoire</p>
-    <h2>De l’informatique de gestion aux solutions digitales.</h2>
-    <p>Mon parcours a commencé par une formation en informatique de gestion, qui m’a apporté une compréhension à la fois technique et attentive aux besoins des organisations. Cette base m’a conduit vers le développement web et mobile, où chaque projet nourrit ma pratique et ma curiosité.</p>
+    <h2>De l’Informatique de Gestion aux solutions digitales.</h2>
+    <p>Mon parcours universitaire a commencé par une formation en Informatique de Gestion à l’Université Catholique de l'Afrique de l'Ouest - Unité Universitaire à Cotonou (UCAO-UUC), qui m’a apporté une compréhension à la fois technique et attentive aux besoins des organisations. Cette base m’a conduit vers le développement web et mobile, où chaque projet nourrit ma pratique et ma curiosité.</p>
     <p>Un projet est pour moi plus qu’un défi technique : c’est l’occasion d’apprendre, d’innover et de transformer un besoin concret en une solution moderne et adaptée. Cette vision a donné naissance à Sergiahos : créer, développer et faire évoluer des idées qui ont du sens.</p>
     <p>Aujourd’hui, je conçois des sites web, des applications et des solutions sur mesure. J’interviens du frontend au backend, ainsi qu’en SEO, automatisation, intelligence artificielle, marketing digital et visibilité en ligne.</p>
     <div className="about-tags"><span>Full Stack</span><span>Web & mobile</span><span>SEO</span><span>Automatisation</span><span>Intelligence artificielle</span><span>Marketing digital</span></div>
