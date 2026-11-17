@@ -18,7 +18,7 @@ export const profile: {
   socials: [
     { label: 'GitHub', url: 'https://github.com/Sergiahos19', icon: 'github' },
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/sergi-serla', icon: 'linkedin' },
-    { label: 'Facebook', url: 'https://www.facebook.com/photo/?fbid=122093310081512782&set=a.122093196033512782', icon: 'facebook' },
+    { label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61595383460461', icon: 'facebook' },
     { label: 'Instagram', url: '', icon: 'instagram' },
     { label: 'TikTok', url: '', icon: 'tiktok' },
   ],
